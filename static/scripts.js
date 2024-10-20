@@ -25,10 +25,54 @@ async function sendMessage() {
     addMessage(message, true);
     userInput.value = '';
 
-    // Simulate AI response (replace with actual API call in a real scenario)
-    const response = await simulateAIResponse(message);
-    addMessage(response, false);
+    if (message.toLowerCase().startsWith('load')) {
+      const filename = message.split(' ')[1];
+      if (filename) {
+        try {
+          const response = await axios.get(`/load?filename=${encodeURIComponent(filename)}`);
+          if (!response.data.content) {
+            throw new Error("File not found");
+          }
+          addMessage(`File ${filename} loaded successfully.`, false);
+          // Process the response content
+          const lines = response.data.content.split('\n');
+          const extractedNames = extractParticipantNames(lines);
+          if (extractedNames.length === 2) {
+            addMessage(`Extracted participants: ${extractedNames[0]} and ${extractedNames[1]}`, false);
+            participants[0].name = extractedNames[0];
+            participants[1].name = extractedNames[1];
+            updateTableParticipants();
+          } else {
+            addMessage("Couldn't find two participant names in the file.", false);
+          }
+        } catch (error) {
+          addMessage(`Error loading file ${filename}: ${error.response?.data || error.message}`, false);
+        }
+      } else {
+        addMessage("Please specify a filename to load.", false);
+      }
+    } else {
+      // Simulate AI response (replace with actual API call in a real scenario)
+      const response = await simulateAIResponse(message);
+      addMessage(response, false);
+    }
   }
+}
+
+function extractParticipantNames(lines) {
+  const names = [];
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+    const name = line.split(':')[0]
+
+    if (!names.includes(name)) {
+        names.push(name);
+        if (names.length === 2) {
+          break;
+        }
+    }
+  }
+  return names;
 }
 
 async function simulateAIResponse(message) {
@@ -44,8 +88,14 @@ async function simulateAIResponse(message) {
 }
 
 function updateTableParticipants() {
+    const userName = document.getElementById('user-name');
+    const agentName = document.getElementById('agent-name');
+    userName.textContent = participants[0].name;
+    agentName.textContent = participants[1].name;
     document.getElementById('table-participant1').textContent = participants[0].name;
     document.getElementById('table-participant2').textContent = participants[1].name;
+    document.getElementById('h1-other').textContent = `→ ${participants[1].name}`;
+    document.getElementById('h2-other').textContent = `→ ${participants[0].name}`;
 }
 
 // Call this function initially to set the names

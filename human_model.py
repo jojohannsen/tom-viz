@@ -1,60 +1,10 @@
 from __future__ import annotations
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pydantic import BaseModel, Field
 from itertools import count
 
 # Global id generator
 id_generator = count(1)
-
-class Info(BaseModel):
-    """
-    Represents the contents of a human's mind, including their personality traits,
-    topics they view positively or negatively, and their interests.
-    """
-    
-    personality: List[str] = Field(
-        default_factory=list,
-        description="A list of personality traits that describe the human."
-    )
-    positive_topics: List[str] = Field(
-        default_factory=list,
-        description="Topics or subjects that the human views positively or enjoys discussing."
-    )
-    negative_topics: List[str] = Field(
-        default_factory=list,
-        description="Topics or subjects that the human views negatively or dislikes discussing."
-    )
-    interests: List[str] = Field(
-        default_factory=list,
-        description="A list of the human's interests, hobbies, or areas of expertise."
-    )
-
-class Incentives(BaseModel):
-    """
-    Represents the social connections and interactions of a human,
-    including their relationships and conversation patterns.
-    """
-
-    relationships: List[str] = Field(
-        default_factory=list,
-        description="Names of other humans with whom this human has a significant relationship."
-    )
-    speaks_positively_of: List[str] = Field(
-        default_factory=list,
-        description="Names of humans about whom this human tends to speak positively."
-    )
-    speaks_negatively_of: List[str] = Field(
-        default_factory=list,
-        description="Names of humans about whom this human tends to speak negatively."
-    )
-    positive_conversations_with: List[str] = Field(
-        default_factory=list,
-        description="Names of humans with whom this human tends to have positive conversations."
-    )
-    negative_conversations_with: List[str] = Field(
-        default_factory=list,
-        description="Names of humans with whom this human tends to have negative conversations."
-    )
 
 class Human(BaseModel):
     """
@@ -69,18 +19,28 @@ class Human(BaseModel):
     name: str = Field(
         description="The name of the human."
     )
-    info: Info = Field(
-        default_factory=Info,
-        description="The mental model of the human, including personality, topics, and interests."
-    )
-    incentives: Incentives = Field(
-        default_factory=Incentives,
-        description="The social connections and interaction patterns of the human."
-    )
-    life_experiences: List[str] = Field(
-        default_factory=list,
-        description="A list of significant life events, stories, or experiences that shape the human's perspective."
-    )
+    experiences: List[str] = Field(default_factory=list)
+    interests: List[str] = Field(default_factory=list)
+    family: List[str] = Field(default_factory=list)
+    friends: List[str] = Field(default_factory=list)
+    pets: List[str] = Field(default_factory=list)
+    community: List[str] = Field(default_factory=list)
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "experiences": self.experiences,
+            "interests": self.interests,
+            "family": self.family,
+            "friends": self.friends,
+            "pets": self.pets,
+            "community": self.community
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(**data)
+
 
 class HumanMind(Human):
     """
@@ -94,37 +54,26 @@ class HumanMind(Human):
 
     def __init__(self, **data):
         super().__init__(**data)
-        # Initialize the self mental model with the human's known info, incentives, and life experiences
-        self.update_mental_model(self.name, self.info, self.incentives, self.life_experiences)
+        # Initialize the self mental model with the human's known attributes
+        self.update_mental_model(self.name)
 
-    def update_mental_model(self, participant_name: str, info: Info = None, incentives: Incentives = None, life_experiences: List[str] = None):
+    def update_mental_model(self, participant_name: str, **attributes):
         """
         Update the mental model for a specific participant.
         """
         if participant_name not in self.mental_models:
-            # For self, use own values; for others, use empty Info, Incentives, and life_experiences
+            # For self, use own values; for others, use empty lists
             if participant_name == self.name:
-                new_info = self.info.model_copy()
-                new_incentives = self.incentives.model_copy()
-                new_life_experiences = self.life_experiences.copy()
+                new_human = self.model_copy(deep=True)
             else:
-                new_info = Info()
-                new_incentives = Incentives()
-                new_life_experiences = []
+                new_human = Human(name=participant_name)
             
-            self.mental_models[participant_name] = Human(
-                name=participant_name,
-                info=new_info,
-                incentives=new_incentives,
-                life_experiences=new_life_experiences
-            )
+            self.mental_models[participant_name] = new_human
         
-        if info:
-            self.mental_models[participant_name].info = info
-        if incentives:
-            self.mental_models[participant_name].incentives = incentives
-        if life_experiences is not None:
-            self.mental_models[participant_name].life_experiences = life_experiences
+        # Update attributes if provided
+        for attr, value in attributes.items():
+            if hasattr(self.mental_models[participant_name], attr):
+                setattr(self.mental_models[participant_name], attr, value)
 
     class Config:
         arbitrary_types_allowed = True

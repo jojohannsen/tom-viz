@@ -1,5 +1,6 @@
 from fasthtml.common import *
 from fastcore.meta import delegates
+import os
 
 app, rt = fast_app()
 
@@ -51,18 +52,18 @@ def AttributeTable():
                 ),
                 Tr(
                     Th(RightArrow(), 'self', cls="human human1-color"),
-                    Th(RightArrow(), 'other', cls="human human1-color"),
+                    Th(RightArrow(), participants[1], id="h1-other", cls="human human1-color"),
                     Th(RightArrow(), 'self', cls="human human2-color"),
-                    Th(RightArrow(), 'other', cls="human human2-color")
+                    Th(RightArrow(), participants[0], id="h2-other", cls="human human2-color")
                 )
             ),
             Tbody(
-                Tr(Td('happy', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('sad', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('sees positively', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('sees negatively', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('life experience', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('introduces topic', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color'))
+                Tr(Td('experiences', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                Tr(Td('interests', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                Tr(Td('family', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                Tr(Td('friends', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                Tr(Td('pets', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                Tr(Td('community', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color'))
             )
         ),
         cls='table-container'
@@ -72,7 +73,7 @@ def AttributeTable():
 def get():
     return JJTitled("Chat Agent Demo",
         Div(
-            Header(I("Theory of Mind - Violation of Expectation")),
+            Header(I("Theory of Mind - Reasoning about what others are thinking")),
             Div(
                 ChatContainer(),
                 AttributeTable(),
@@ -84,5 +85,21 @@ def get():
         Script(src='/static/scripts.js'),
         Link(rel="stylesheet", href="/static/styles.css")
     )
+
+@rt('/load')
+def load_file(filename:str):
+    if not filename:
+        return {'error': 'Filename not provided'}, 400
+    
+    file_path = os.path.join('data', filename)
+    if not os.path.exists(file_path):
+        return {'error': 'File not found'}, 404
+    
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+        return {'content': content}
+    except Exception as e:
+        return {'error': f'Error reading file: {str(e)}'}, 500
 
 serve()

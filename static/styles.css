@@ -130,7 +130,7 @@ body {
 .chat-header {
     background-color: var(--peach); 
     color: black; /* Keeping the deep purple color for contrast */
-    padding: 0px 20px; /* Keeping the reduced vertical padding */
+    padding: 2px 20px; /* Keeping the reduced vertical padding */
 }
 
 .participants-container {
@@ -153,7 +153,7 @@ body {
 .message {
   margin-bottom: 15px;
   padding: 2px 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   max-width: 80%;
   position: relative;
 }
@@ -190,24 +190,26 @@ body {
 
 .chat-input {
   display: flex;
-  padding: 20px;
+  padding: 2px 10px;
 }
 
 #user-input {
   flex-grow: 1;
-  padding: 10px;
+  padding: 2px 10px;
   border: 1px solid #ccc;
-  border-radius: 20px;
+  border-radius: 8px;
   margin-right: 10px;
+  margin-bottom: 20px;
 }
 
 #send-button {
-  background-color: #4a90e2;
+  background-color: #297bd8;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 2px 10px;
+  border-radius: 8px;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
 #send-button:hover {
@@ -282,3 +284,4 @@ th .right-arrow {
     margin-right: 5px;
     vertical-align: middle;
 }
+
