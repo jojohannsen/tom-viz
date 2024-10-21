@@ -9,6 +9,25 @@ let participants = [
   { name: "AI Agent", id: "agent" }
 ];
 
+let conversation = [];
+let current_line = 0;
+let number_lines = 0;
+function push_conversation(lines) {
+  conversation.push(...lines);
+  current_line = 0;
+  number_lines = lines.length;
+}
+
+function next_line() {
+    if (current_line < number_lines) {
+        const message = conversation[current_line]
+        const [speaker, content] = message.split(':');
+        // Check if the speaker matches participants[1] or participants[0]
+        addMessage(content.trim(), speaker === participants[0].name);
+        current_line++;
+    }
+}
+
 function addMessage(content, isUser) {
   const messageDiv = document.createElement('div');
   messageDiv.classList.add('message');
@@ -19,13 +38,21 @@ function addMessage(content, isUser) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+function clearMessages() {
+  chatMessages.innerHTML = '';
+}
+
 async function sendMessage() {
   const message = userInput.value.trim();
   if (message) {
-    addMessage(message, true);
     userInput.value = '';
 
-    if (message.toLowerCase().startsWith('load')) {
+    if (message.toLowerCase() === 'clear') {
+      clearMessages();
+    } else if (message.toLowerCase() === 'go') {
+        next_line();
+    }
+    else if (message.toLowerCase().startsWith('load')) {
       const filename = message.split(' ')[1];
       if (filename) {
         try {
@@ -45,6 +72,7 @@ async function sendMessage() {
           } else {
             addMessage("Couldn't find two participant names in the file.", false);
           }
+          push_conversation(lines);
         } catch (error) {
           addMessage(`Error loading file ${filename}: ${error.response?.data || error.message}`, false);
         }
@@ -52,6 +80,7 @@ async function sendMessage() {
         addMessage("Please specify a filename to load.", false);
       }
     } else {
+      addMessage(message, true);
       // Simulate AI response (replace with actual API call in a real scenario)
       const response = await simulateAIResponse(message);
       addMessage(response, false);

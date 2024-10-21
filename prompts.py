@@ -1,23 +1,21 @@
+from human_model import Human, HumanMind
+
 class Prompts:
     SELF_PERCEPTION = """
     Given the following conversation between {participant1_name} and {participant2_name}:
 
     {example_conversation}
 
-    You are tasked with extracting {participant1_name}'s view of himself. 
-    Focus on {participant1_name}'s self-perception, not how others see him. 
+    You are tasked with extracting {participant1_name}'s view of themselves. 
+    Focus on {participant1_name}'s self-perception, not how others see them. 
     Based on the conversation, provide the following information about {participant1_name}:
 
-    1. Personality traits (list 3-5 traits):
-    2. Positive topics (list 2-3 topics {participant1_name} views positively or enjoys discussing):
-    3. Negative topics (list 2-3 topics {participant1_name} views negatively or dislikes discussing):
-    4. Interests (list 2-3 of {participant1_name}'s interests, hobbies, or areas of expertise):
-    5. Relationships (list any significant relationships mentioned):
-    6. Speaks positively of (list any individuals {participant1_name} speaks positively about):
-    7. Speaks negatively of (list any individuals {participant1_name} speaks negatively about):
-    8. Has positive conversations with (based on this conversation):
-    9. Has negative conversations with (based on this conversation):
-    10. Life experiences (list 2-3 significant life events or stories that have shaped {participant1_name}):
+    1. Experiences (list 2-3 significant life events or experiences that have shaped {participant1_name}):
+    2. Interests (list 2-3 hobbies, passions, or topics that {participant1_name} finds engaging or enjoyable):
+    3. Family (list any family members or family-related information important to {participant1_name}):
+    4. Friends (list any close friends or social connections that are significant to {participant1_name}):
+    5. Pets (list any pets owned by {participant1_name} or animals they have a strong connection with):
+    6. Community (list any groups, organizations, or communities {participant1_name} is part of or identifies with):
     """
 
     OTHER_PERCEPTION = """
@@ -31,14 +29,79 @@ class Prompts:
     Based on the conversation, provide the following information about 
     how {participant1_name} views {participant2_name}:
 
-    1. Personality traits (list 3-5 traits {participant1_name} might attribute to {participant2_name}):
-    2. Positive topics (list 2-3 topics {participant1_name} thinks {participant2_name} views positively or enjoys discussing):
-    3. Negative topics (list 2-3 topics {participant1_name} thinks {participant2_name} views negatively or dislikes discussing):
-    4. Interests (list 2-3 interests, hobbies, or areas of expertise {participant1_name} might attribute to {participant2_name}):
-    5. Relationships (list any significant relationships of {participant2_name} mentioned by {participant1_name}):
-    6. Speaks positively of (list any individuals {participant1_name} notices {participant2_name} speaking positively about):
-    7. Speaks negatively of (list any individuals {participant1_name} notices {participant2_name} speaking negatively about):
-    8. Has positive conversations with (based on {participant1_name}'s perception in this conversation):
-    9. Has negative conversations with (based on {participant1_name}'s perception in this conversation):
-    10. Life experiences (list 2-3 significant life events or stories that {participant1_name} might attribute to {participant2_name}):
+    1. Experiences (list 2-3 significant life events or experiences that {participant1_name} believes have shaped {participant2_name}):
+    2. Interests (list 2-3 hobbies, passions, or topics that {participant1_name} thinks {participant2_name} finds engaging or enjoyable):
+    3. Family (list any family members or family-related information that {participant1_name} believes is important to {participant2_name}):
+    4. Friends (list any close friends or social connections that {participant1_name} thinks are significant to {participant2_name}):
+    5. Pets (list any pets {participant1_name} believes {participant2_name} owns or has a strong connection with):
+    6. Community (list any groups, organizations, or communities {participant1_name} thinks {participant2_name} is part of or identifies with):
     """
+
+def generate_human_description(human: Human) -> str:
+    """Generate a description of a human based on their attributes."""
+    description = f"{human.name} is a person with the following characteristics:\n"
+    
+    if human.experiences:
+        description += f"Experiences: {', '.join(human.experiences)}\n"
+    
+    if human.interests:
+        description += f"Interests: {', '.join(human.interests)}\n"
+    
+    if human.family:
+        description += f"Family: {', '.join(human.family)}\n"
+    
+    if human.friends:
+        description += f"Friends: {', '.join(human.friends)}\n"
+    
+    if human.pets:
+        description += f"Pets: {', '.join(human.pets)}\n"
+    
+    if human.community:
+        description += f"Community involvement: {', '.join(human.community)}\n"
+    
+    return description.strip()
+
+def generate_mental_model_prompt(human_mind: HumanMind, other_name: str) -> str:
+    """Generate a prompt for the mental model of another person."""
+    self_description = generate_human_description(human_mind)
+    other_mental_model = human_mind.mental_models.get(other_name, Human(name=other_name))
+    other_description = generate_human_description(other_mental_model)
+    
+    prompt = f"""
+    You are {human_mind.name}. Here's what you know about yourself:
+    {self_description}
+
+    You are thinking about {other_name}. Here's what you believe about {other_name}:
+    {other_description}
+
+    Based on this information, how do you think {other_name} perceives you? 
+    Consider their experiences, interests, and social connections. 
+    How might these factors influence their view of you?
+    """
+    
+    return prompt.strip()
+
+def generate_conversation_prompt(human1: Human, human2: Human, context: str = "") -> str:
+    """Generate a prompt for a conversation between two humans."""
+    h1_description = generate_human_description(human1)
+    h2_description = generate_human_description(human2)
+    
+    prompt = f"""
+    {human1.name}'s characteristics:
+    {h1_description}
+
+    {human2.name}'s characteristics:
+    {h2_description}
+
+    Context: {context}
+
+    Generate a conversation between {human1.name} and {human2.name}. 
+    Consider their experiences, interests, and social connections. 
+    How might these factors influence their interaction?
+
+    {human1.name}: 
+    """
+    
+    return prompt.strip()
+
+# You can add more prompt generation functions as needed

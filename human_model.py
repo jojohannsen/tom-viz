@@ -19,12 +19,30 @@ class Human(BaseModel):
     name: str = Field(
         description="The name of the human."
     )
-    experiences: List[str] = Field(default_factory=list)
-    interests: List[str] = Field(default_factory=list)
-    family: List[str] = Field(default_factory=list)
-    friends: List[str] = Field(default_factory=list)
-    pets: List[str] = Field(default_factory=list)
-    community: List[str] = Field(default_factory=list)
+    experiences: List[str] = Field(
+        default_factory=list,
+        description="Significant life events or experiences that have shaped the person."
+    )
+    interests: List[str] = Field(
+        default_factory=list,
+        description="Hobbies, passions, or topics that the person finds engaging or enjoyable."
+    )
+    family: List[str] = Field(
+        default_factory=list,
+        description="Family members or family-related information important to the person."
+    )
+    friends: List[str] = Field(
+        default_factory=list,
+        description="Close friends or social connections that are significant to the person."
+    )
+    pets: List[str] = Field(
+        default_factory=list,
+        description="Pets owned by the person or animals they have a strong connection with."
+    )
+    community: List[str] = Field(
+        default_factory=list,
+        description="Groups, organizations, or communities the person is part of or identifies with."
+    )
 
     def to_dict(self):
         return {
