@@ -20,9 +20,7 @@ def ChatContainer():
     return Div(
         Div(
             Div(
-                Button('c1', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
-                Span('...'),
-                Button('fix table', id='update-table', cls='participants-buttons', onclick='updateParticipantsUI()'),
+                Button('conv-1', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
                 Span('...'),
                 Span('Participants:', cls='participants-label'),
                 ParticipantsButtons(participants[0], participants[1]),

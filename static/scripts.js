@@ -9,6 +9,7 @@ let participants = [
   { name: "AI Agent", id: "agent" }
 ];
 
+let isFirstClick = true;
 
 function addMessage(content, isUser) {
   const messageDiv = document.createElement('div');
@@ -83,6 +84,16 @@ function updateParticipantsUI() {
 
 document.body.addEventListener("htmx:trigger", (evt) => {
     if (evt.detail.name === "participants-updated") {
+        updateParticipantsUI();
+    }
+});
+
+// Update this event listener
+document.getElementById('next-line').addEventListener('click', () => {
+    if (isFirstClick) {
+        clearMessages();
+        isFirstClick = false;
+    } else {
         updateParticipantsUI();
     }
 });
