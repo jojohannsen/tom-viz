@@ -169,22 +169,22 @@ body {
   font-style: italic;
 }
 
-.user-message {
+.agent-message {
   background-color: #e6f3ff;
   align-self: flex-end;
   margin-left: auto;
 }
 
-.user-message::before {
+agent-message::before {
   right: 10px;
 }
 
-.agent-message {
+.user-message {
   background-color: #f0f0f0;
   align-self: flex-start;
 }
 
-.agent-message::before {
+.user-message::before {
   left: 10px;
 }
 
@@ -225,12 +225,12 @@ body {
   background-color: white;
 }
 
-.human1-color {
+.human2-color {
     color: darkgray;
     background-color: var(--misty-rose);
 }
 
-.human2-color {
+.human1-color {
     color: darkgray;
     background-color: var(--platinum);
 }
