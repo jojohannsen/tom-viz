@@ -20,10 +20,11 @@ def ChatContainer():
     return Div(
         Div(
             Div(
-                Button('test', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
-                Span('  '),
-                Button('Update Table', id='update-table', cls='participants-buttons', onclick='updateParticipantsUI()'),
-                Span('  Participants:', cls='participants-label'),
+                Button('c1', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
+                Span('...'),
+                Button('fix table', id='update-table', cls='participants-buttons', onclick='updateParticipantsUI()'),
+                Span('...'),
+                Span('Participants:', cls='participants-label'),
                 ParticipantsButtons(participants[0], participants[1]),
                 cls='participants-container'
             ),
@@ -111,7 +112,7 @@ def load_file(filename:str):
 @rt('/next')
 def next_line():
     global current_conversation, current_line, participants
-    print("next_line")
+
     if not current_conversation:
         # Load conversation_1.txt if no conversation is loaded
         file_path = os.path.join('data', 'conversation_1.txt')

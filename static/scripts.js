@@ -63,8 +63,6 @@ function updateTableParticipants(user, agent) {
     document.getElementById('h2-other').textContent = `→ ${user}`;
 }
 
-
-
 function changeName(element, participantIndex) {
     const newName = prompt(`Enter name for ${participants[participantIndex].name}:`);
     if (newName && newName.trim()) {
