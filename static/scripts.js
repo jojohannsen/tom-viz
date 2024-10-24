@@ -88,13 +88,16 @@ document.body.addEventListener("htmx:trigger", (evt) => {
     }
 });
 
+clickCount = 0
 // Update this event listener
-document.getElementById('next-line').addEventListener('click', () => {
-    if (isFirstClick) {
-        clearMessages();
-        isFirstClick = false;
-    } else {
-        updateParticipantsUI();
+document.getElementById('next-line').addEventListener('click', function() {
+    if (this.textContent === 'conv-1') {
+        if (clickCount === 0) {
+            document.getElementById('chat-messages').innerHTML = '';
+            clickCount++;
+        } else if (clickCount === 1) {
+            updateParticipantsUI();
+        }
     }
 });
 
@@ -107,3 +110,7 @@ userInput.addEventListener('keypress', (e) => {
 
 userName.addEventListener('click', () => changeName(userName, 0));
 agentName.addEventListener('click', () => changeName(agentName, 1));
+
+document.addEventListener('analyze-conversation', () => {
+    console.log("analyze-conversation event triggered");
+});

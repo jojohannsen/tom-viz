@@ -1,15 +1,21 @@
 from fasthtml.common import *
 from fastcore.meta import delegates
 import os
+from llms import create_named_participants
+from human import Human, HumanView
+from conversation_manager import ConversationManager  # Import ConversationManager
 
 app, rt = fast_app()
 
+# Add these global variables at the top of the file
 participants = ["You", "AI Agent"]
-current_conversation = []
+conversation_manager = None
 current_line = 0
+human1 = None
+human2 = None
 
 @delegates(ft_hx, keep=True)
-def JJTitled(title:str="FastHTML app", *args, cls="container", **kwargs)->FT:
+def JJTitled(title:str, *args, cls="container", **kwargs)->FT:
     "An HTML partial containing a `Title`, and `H1`, and any provided children"
     return Title(title), Main(*args, cls=cls, **kwargs)
 
@@ -21,6 +27,7 @@ def ChatContainer():
         Div(
             Div(
                 Button('conv-1', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
+                Button('Update Table', id='update-table-btn', cls='participants-buttons', hx_get='/conversation', hx_target='#attribute-table', hx_swap='outerHTML'),
                 Span('...'),
                 Span('Participants:', cls='participants-label'),
                 ParticipantsButtons(participants[0], participants[1]),
@@ -41,11 +48,31 @@ def ChatContainer():
         cls='chat-container left-column'
     )
 
+def AttributeList(human_view: HumanView) -> FT:
+    """
+    Create a FastHTML Ul component with Li elements for each attribute in a HumanView.
+    """
+    return Ul(*[Li(attr) for attr in human_view.attributes], cls='attribute-list')
+
 def AttributeTable():
+    global human1, human2
+    if human1 is None or human2 is None:
+        # Initialize with an empty dictionary for society
+        human1 = Human(name=participants[0], society={})
+        human2 = Human(name=participants[1], society={})
+    
+    def get_human_view(human, name):
+        return human.society.get(name, HumanView(name=name, myself=(human.name == name)))
+
     return Div(
         Table(
             ParticipantTableHeader(participants[0], participants[1]),
             Tbody(
+                Tr(Td('attributes', cls='row-header'), 
+                   Td(AttributeList(get_human_view(human1, human1.name)), cls='human human1-color', id='human1-self-view'), 
+                   Td(AttributeList(get_human_view(human1, human2.name)), cls='human human1-color', id='human1-other-view'), 
+                   Td(AttributeList(get_human_view(human2, human2.name)), cls='human human2-color', id='human2-self-view'), 
+                   Td(AttributeList(get_human_view(human2, human1.name)), cls='human human2-color', id='human2-other-view')),
                 Tr(Td('experiences', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
                 Tr(Td('interests', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
                 Tr(Td('family', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
@@ -54,7 +81,8 @@ def AttributeTable():
                 Tr(Td('community', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color'))
             )
         ),
-        cls='table-container'
+        cls='table-container',
+        id='attribute-table'
     )
 
 def ParticipantTableHeader(participant1, participant2):
@@ -71,12 +99,12 @@ def ParticipantTableHeader(participant1, participant2):
             Th(RightArrow(), participant1, id="h2-other", cls="human human2-color")
         ),
         id='participant-table-header',
-        hx_swap_oob="outerHTML"
     )
+
 
 @rt('/') 
 def get():
-    return JJTitled("Chat Agent Demo",
+    return JJTitled("Theory of Mind",
         Div(
             Header(I("Theory of Mind - Reasoning about what others are thinking")),
             Div(
@@ -91,56 +119,49 @@ def get():
         Link(rel="stylesheet", href="/static/styles.css")
     )
 
-@rt('/load')
-def load_file(filename:str):
-    if not filename:
-        return {'error': 'Filename not provided'}, 400
-    
-    file_path = os.path.join('data', filename)
-    if not os.path.exists(file_path):
-        return {'error': 'File not found'}, 404
-    
-    try:
-        with open(file_path, 'r') as file:
-            content = file.read()
-        return {'content': content}
-    except Exception as e:
-        return {'error': f'Error reading file: {str(e)}'}, 500
-
 @rt('/next')
 def next_line():
-    global current_conversation, current_line, participants
+    global conversation_manager, current_line, participants
 
-    if not current_conversation:
-        # Load conversation_1.txt if no conversation is loaded
+    if not conversation_manager or current_line >= len(conversation_manager.all_entries):
+        # Reset everything and start over
         file_path = os.path.join('data', 'conversation_1.txt')
         try:
             with open(file_path, 'r') as file:
-                current_conversation = file.readlines()
-            participants[0] = current_conversation[0].split(':')[0].strip()
-            participants[1] = current_conversation[1].split(':')[0].strip()
+                conversation_text = file.read()
+            conversation_manager = ConversationManager(conversation_text)
+            participants = conversation_manager.participants()
             current_line = 0
+            return (
+                Div("Starting new conversation...", cls="message system-message"),
+                ParticipantsButtons(participants[0], participants[1])
+            )
         except Exception as e:
             return {'error': f'Error reading file: {str(e)}'}, 500
     
-    if current_line < len(current_conversation):
-        line = current_conversation[current_line].strip()
-        speaker, content = line.split(':', 1)
-        is_user = speaker == participants[0]
-        print(f"speaker: {speaker}, content: {content}, is_user: {is_user}")
-        print("p0=", participants[0], "p1=", participants[1])
-        message_class = 'user-message' if is_user else 'agent-message'
-        
-        result = Div(content.strip(), cls=f"message {message_class}", data_sender=speaker)
-        current_line += 1
-        return result,ParticipantsButtons(participants[0], participants[1])#,ParticipantTableHeader(participants[0], participants[1])
+    name, content = conversation_manager.next()
+    is_user = name == participants[0]
+    message_class = 'user-message' if is_user else 'agent-message'
+    
+    result = Div(content.strip(), cls=f"message {message_class}", data_sender=name)
+    current_line += 1
+    
+    if current_line >= len(conversation_manager.all_entries):
+        return (
+            result,
+            Div("Conversation ended. Click 'Next' to start over.", cls="message system-message")
+        )
     else:
-        return Div("Conversation ended", cls="message system-message")
+        return result, ParticipantsButtons(participants[0], participants[1])
 
 def ParticipantsButtons(participant1, participant2):
+    trigger_script = Script(
+        "document.dispatchEvent(new CustomEvent('analyze-conversation'));"
+    )
     return Div(
         Button(participant1, id='user-name', cls='participants-buttons', hx_get='/update-participants', hx_target='#participants-container', hx_swap='outerHTML'),
         Button(participant2, id='agent-name', cls='participants-buttons', hx_get='/update-participants', hx_target='#participants-container', hx_swap='outerHTML'),
+        trigger_script,
         id='participants-container',
         cls='participants',
         hx_swap_oob="outerHTML"
@@ -149,5 +170,46 @@ def ParticipantsButtons(participant1, participant2):
 @rt('/update-participants')
 def update_participants():
     return ParticipantsButtons(participants[0], participants[1])
+
+@rt('/conversation')
+def get():
+    global conversation_manager, current_line, participants, human1, human2
+    
+    if not conversation_manager:
+        return {'error': 'No conversation loaded'}, 400
+    
+    conversation = conversation_manager.so_far()
+    print(conversation)
+    
+    participant_generator = create_named_participants(conversation, participants)
+    
+    # human1: Human
+    human1 = next(participant_generator)
+    # human2: Human
+    human2 = next(participant_generator)
+    print("HUMANS: ", human1.name, human2.name)
+    human1_self_prompt = human1.generate_self_view_update_prompt(conversation)
+    print(f"\nSelf-view update prompt for {human1.name}:")
+    print(human1_self_prompt)
+    human1 = human1.update_self_view(human1_self_prompt)
+    
+    human2_self_prompt = human2.generate_self_view_update_prompt(conversation)
+    print(f"\nSelf-view update prompt for {human2.name}:")
+    print(human2_self_prompt)
+    human2 = human2.update_self_view(human2_self_prompt)
+    
+    human1_other_prompt = human1.generate_other_view_update_prompt(human2.name, conversation)
+    print(f"\nOther-view update prompt for {human1.name} about {human2.name}:")
+    print(human1_other_prompt)
+    human1 = human1.update_other_view(human1_other_prompt, human2)
+    
+    human2_other_prompt = human2.generate_other_view_update_prompt(human1.name, conversation)
+    print(f"\nOther-view update prompt for {human2.name} about {human1.name}:")
+    print(human2_other_prompt)
+    human2 = human2.update_other_view(human2_other_prompt, human1)
+    
+    table = AttributeTable()
+    
+    return table
 
 serve()
