@@ -2,3 +2,4 @@ python-fasthtml==0.6.10
 langgraph-codegen==0.1.8
 langchain-openai==0.2.3
 langchain-anthropic==0.2.3
+langchain==0.3.4

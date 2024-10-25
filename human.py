@@ -62,7 +62,7 @@ class Human(BaseModel):
         """Update this person's view of another person"""
         print("UPDATE OTHER VIEW")
         # Create ChatOpenAI instance with gpt-4
-        gpt4 = ChatOpenAI(model_name="gpt-o", temperature=0).with_structured_output(HumanView)
+        gpt4 = ChatOpenAI(model_name="gpt-4o", temperature=0).with_structured_output(HumanView)
 
         # Create ChatAnthropic instance with claude-3-sonnet-20240229
         claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
