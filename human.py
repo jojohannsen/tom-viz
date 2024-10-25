@@ -4,6 +4,9 @@ from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
+import os
+import pickle
+from datetime import datetime
 
 # Core data models
 class HumanView(BaseModel):
@@ -83,22 +86,8 @@ class Human(BaseModel):
         }
 
         # Invoke each chain with the prepared input
-        gpt4_result = None
-        claude_result = None
-
-        try:
-            gpt4_result = gpt4_chain.invoke(chain_input)
-            print(f"GPT-4 Result for {other_person}:")
-            print(type(gpt4_result))
-        except Exception as e:
-            print(f"Error with GPT-4 invocation: {type(e)}")
-
-        try:
-            claude_result = claude_chain.invoke(chain_input)
-            print(f"Claude 3.5 Sonnet Result for {other_person}:")
-            print(type(claude_result))
-        except Exception as e:
-            print(f"Error with Claude 3.5 Sonnet invocation: {type(e)}")
+        gpt4_result = invoke_and_save(gpt4_chain, chain_input, "GPT4", other_person)
+        claude_result = invoke_and_save(claude_chain, chain_input, "Claude", other_person)
 
         # Update self-view only if we have valid results
         if gpt4_result:
@@ -140,18 +129,8 @@ class Human(BaseModel):
         }
 
         # Invoke each chain with the prepared input
-        gpt4_result = None
-        claude_result = None
-
-        try:
-            gpt4_result = gpt4_chain.invoke(chain_input)
-        except Exception as e:
-            print(f"Error with GPT-4 invocation: {type(e)}")
-
-        try:
-            claude_result = claude_chain.invoke(chain_input)
-        except Exception as e:
-            print(f"Error with Claude 3.5 Sonnet invocation: {type(e)}")
+        gpt4_result = invoke_and_save(gpt4_chain, chain_input, "GPT4", self.name)
+        claude_result = invoke_and_save(claude_chain, chain_input, "Claude", self.name)
 
         # Update self-view only if we have valid results
         if gpt4_result:
@@ -207,3 +186,30 @@ def update_view(human: Human, target: str, new_attributes: List[str]) -> None:
 def format_view(view: HumanView) -> List[str]:
     """Format a view's attributes as a list"""
     return view.attributes
+
+def invoke_and_save(chain, chain_input, model_name, other_person):
+    # Create the directory if it doesn't exist
+    os.makedirs('tests/pickle', exist_ok=True)
+
+    # Generate a unique filename
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"tests/pickle/{model_name}_{other_person}_{timestamp}.pkl"
+
+    try:
+        result = chain.invoke(chain_input)
+        print(f"{model_name} Result for {other_person}:")
+        print(type(result))
+        
+        # Save the input and result to a pickle file
+        with open(filename, 'wb') as f:
+            pickle.dump({'input': chain_input, 'output': result}, f)
+        
+        return result
+    except Exception as e:
+        print(f"Error with {model_name} invocation: {type(e)}")
+        
+        # Save the input and exception to a pickle file
+        with open(filename, 'wb') as f:
+            pickle.dump({'input': chain_input, 'error': str(e)}, f)
+        
+        return None
