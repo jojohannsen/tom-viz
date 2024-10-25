@@ -8,6 +8,8 @@ import os
 import pickle
 from datetime import datetime
 
+from persistent_lru_cache import persistent_lru_cache_with_key, last_call_was_cache_hit
+
 # Core data models
 class HumanView(BaseModel):
     """Represents one person's view of another person (or themselves)"""
@@ -64,82 +66,80 @@ class Human(BaseModel):
     def update_other_view(self, other_person: str, prompt: str):
         """Update this person's view of another person"""
         print("UPDATE OTHER VIEW")
-        # Create ChatOpenAI instance with gpt-4
-        gpt4 = ChatOpenAI(model_name="gpt-4o", temperature=0).with_structured_output(HumanView)
-
-        # Create ChatAnthropic instance with claude-3-sonnet-20240229
-        claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
-
+        # Determine models to use
+        models = self.determine_models()
+        
         # Create a ChatPromptTemplate
         chat_prompt = ChatPromptTemplate.from_template(
             "Based on the following information, create a HumanView for {name}:\n\n{prompt}"
         )
-
-        # Create chains for each model
-        gpt4_chain = chat_prompt | gpt4 
-        claude_chain = chat_prompt | claude 
-
+    
         # Prepare the input
         chain_input = {
             "name": other_person,
             "prompt": prompt
         }
-
-        # Invoke each chain with the prepared input
-        gpt4_result = invoke_and_save(gpt4_chain, chain_input, "GPT4", other_person)
-        claude_result = invoke_and_save(claude_chain, chain_input, "Claude", other_person)
-
-        # Update self-view only if we have valid results
-        if gpt4_result:
-            print(f"Updating {other_person}'s view with GPT-4 attributes: {gpt4_result.attributes}")
-            print("current view: ", self.society[other_person].attributes)
-            self.society[other_person].attributes = self.merge_attributes(self.society[other_person].attributes, gpt4_result.attributes)
-            print("new view: ", self.society[other_person].attributes)        
-        if claude_result:
-            print(f"Updating {other_person}'s view with Claude 3.5 Sonnet attributes: {claude_result.attributes}")
-            print("current view: ", self.society[other_person].attributes)
-            self.society[other_person].attributes = self.merge_attributes(self.society[other_person].attributes, claude_result.attributes)
-            print("new view: ", self.society[other_person].attributes)
-
+    
+        # For each model, create chain and invoke
+        for model_name, model in models:
+            chain = chat_prompt | model
+            result = invoke_and_save(chain, chain_input, model_name, other_person)
+            
+            # Update other person's view if we have valid results
+            if result:
+                print(f"Updating {other_person}'s view with {model_name} attributes: {result.attributes}")
+                print("current view: ", self.society[other_person].attributes)
+                self.society[other_person].attributes = self.merge_attributes(
+                self.society[other_person].attributes, result.attributes
+                )
+                print("new view: ", self.society[other_person].attributes)
+    
         return self
 
+
+    def determine_models(self):
+        """Determine which models to use."""
+        print("DETERMINE MODELS")
+        models = []
+        # Logic to determine models to use
+        # For example, you might check some configuration or condition
+        # For simplicity, we'll use the existing models
+        gpt4 = ChatOpenAI(model_name="gpt-4o", temperature=0).with_structured_output(HumanView)
+        models.append(('GPT4', gpt4))
+        claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
+        models.append(('Claude', claude))
+        return models
 
     def update_self_view(self, prompt: str):
         """Update this person's self-view"""
         print("UPDATE SELF VIEW")
-        # Create ChatOpenAI instance with gpt-4
-        gpt4 = ChatOpenAI(model_name="gpt-4o", temperature=0).with_structured_output(HumanView)
-
-        # Create ChatAnthropic instance with claude-3-sonnet-20240229
-        claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
-
+        # Determine models to use
+        models = self.determine_models()
+        
         # Create a ChatPromptTemplate
         chat_prompt = ChatPromptTemplate.from_template(
             "Based on the following information, create a HumanView for {name}:\n\n{prompt}"
         )
-
-        # Create chains for each model
-        gpt4_chain = chat_prompt | gpt4     
-        claude_chain = chat_prompt | claude 
-
+    
         # Prepare the input
         chain_input = {
             "name": self.name,
             "prompt": prompt
         }
-
-        # Invoke each chain with the prepared input
-        gpt4_result = invoke_and_save(gpt4_chain, chain_input, "GPT4", self.name)
-        claude_result = invoke_and_save(claude_chain, chain_input, "Claude", self.name)
-
-        # Update self-view only if we have valid results
-        if gpt4_result:
-            self.society[self.name].attributes = self.merge_attributes(self.society[self.name].attributes, gpt4_result.attributes)
+    
+    # For each model, create chain and invoke
+        for model_name, model in models:
+            chain = chat_prompt | model
+            result = invoke_and_save(chain, chain_input, model_name, self.name)
+            
+            # Update self-view if we have valid results
+            if result:
+                self.society[self.name].attributes = self.merge_attributes(
+                    self.society[self.name].attributes, result.attributes
+                )
         
-        if claude_result:
-            self.society[self.name].attributes = self.merge_attributes(self.society[self.name].attributes, claude_result.attributes)
-
         return self
+
 
     def merge_attributes(self, current_attributes: List[str], new_attributes: List[str]) -> List[str]:
         """Merge two lists of attributes, removing duplicates"""
@@ -187,6 +187,15 @@ def format_view(view: HumanView) -> List[str]:
     """Format a view's attributes as a list"""
     return view.attributes
 
+class NotChain:
+    def __init__(self, chain):
+        self.chain = chain
+
+    @persistent_lru_cache_with_key(maxsize=128, key_func=lambda self, p: p['prompt'])
+    def invoke(self, p):
+        return self.chain.invoke(p)
+    
+
 def invoke_and_save(chain, chain_input, model_name, other_person):
     # Create the directory if it doesn't exist
     os.makedirs('tests/pickle', exist_ok=True)
@@ -196,13 +205,12 @@ def invoke_and_save(chain, chain_input, model_name, other_person):
     filename = f"tests/pickle/{model_name}_{other_person}_{timestamp}.pkl"
 
     try:
+        chain = NotChain(chain)
         result = chain.invoke(chain_input)
-        print(f"{model_name} Result for {other_person}:")
-        print(type(result))
-        
-        # Save the input and result to a pickle file
-        with open(filename, 'wb') as f:
-            pickle.dump({'input': chain_input, 'output': result}, f)
+        if not last_call_was_cache_hit():
+            # Save the input and result to a pickle file
+            with open(filename, 'wb') as f:
+                pickle.dump({'input': chain_input, 'output': result}, f)
         
         return result
     except Exception as e:
