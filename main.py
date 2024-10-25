@@ -5,6 +5,8 @@ from llms import create_named_participants
 from human import Human, HumanView
 from conversation_manager import ConversationManager  # Import ConversationManager
 
+os.environ['LANGCHAIN_PROJECT'] = 'theory-of-mind-2'
+
 app, rt = fast_app()
 
 # Add these global variables at the top of the file
@@ -26,7 +28,7 @@ def ChatContainer():
     return Div(
         Div(
             Div(
-                Button('conv-1', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
+                Button('Bob-Shirley', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
                 Button('Update Table', id='update-table-btn', cls='participants-buttons', hx_get='/conversation', hx_target='#attribute-table', hx_swap='outerHTML'),
                 Span('...'),
                 Span('Participants:', cls='participants-label'),
@@ -48,11 +50,11 @@ def ChatContainer():
         cls='chat-container left-column'
     )
 
-def AttributeList(human_view: HumanView) -> FT:
+def AttributeList(human_view: HumanView, color: str) -> FT:
     """
-    Create a FastHTML Ul component with Li elements for each attribute in a HumanView.
+    Create a FastHTML Pre component with newline-separated attributes from a HumanView.
     """
-    return Ul(*[Li(attr) for attr in human_view.attributes], cls='attribute-list')
+    return Pre('\n'.join(human_view.attributes), cls=f'attribute-list {color}')
 
 def AttributeTable():
     global human1, human2
@@ -69,10 +71,10 @@ def AttributeTable():
             ParticipantTableHeader(participants[0], participants[1]),
             Tbody(
                 Tr(Td('attributes', cls='row-header'), 
-                   Td(AttributeList(get_human_view(human1, human1.name)), cls='human human1-color', id='human1-self-view'), 
-                   Td(AttributeList(get_human_view(human1, human2.name)), cls='human human1-color', id='human1-other-view'), 
-                   Td(AttributeList(get_human_view(human2, human2.name)), cls='human human2-color', id='human2-self-view'), 
-                   Td(AttributeList(get_human_view(human2, human1.name)), cls='human human2-color', id='human2-other-view')),
+                   Td(AttributeList(get_human_view(human1, human1.name), 'self-color'), cls='human human1-color', id='human1-self-view'), 
+                   Td(AttributeList(get_human_view(human1, human2.name), 'other-color'), cls='human human1-color', id='human1-other-view'), 
+                   Td(AttributeList(get_human_view(human2, human2.name), 'self-color'), cls='human human2-color', id='human2-self-view'), 
+                   Td(AttributeList(get_human_view(human2, human1.name), 'other-color'), cls='human human2-color', id='human2-other-view')),
                 Tr(Td('experiences', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
                 Tr(Td('interests', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
                 Tr(Td('family', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
@@ -133,7 +135,7 @@ def next_line():
             participants = conversation_manager.participants()
             current_line = 0
             return (
-                Div("Starting new conversation...", cls="message system-message"),
+                Div("Conversation...", cls="message system-message"),
                 ParticipantsButtons(participants[0], participants[1])
             )
         except Exception as e:
@@ -189,24 +191,19 @@ def get():
     human2 = next(participant_generator)
     print("HUMANS: ", human1.name, human2.name)
     human1_self_prompt = human1.generate_self_view_update_prompt(conversation)
-    print(f"\nSelf-view update prompt for {human1.name}:")
-    print(human1_self_prompt)
     human1 = human1.update_self_view(human1_self_prompt)
-    
+    print("HUMAN 1 (self view): ", human1.society[human1.name].attributes)
+
     human2_self_prompt = human2.generate_self_view_update_prompt(conversation)
-    print(f"\nSelf-view update prompt for {human2.name}:")
-    print(human2_self_prompt)
     human2 = human2.update_self_view(human2_self_prompt)
+    print("HUMAN 2 (self view): ", human2.society[human2.name].attributes)
     
     human1_other_prompt = human1.generate_other_view_update_prompt(human2.name, conversation)
-    print(f"\nOther-view update prompt for {human1.name} about {human2.name}:")
-    print(human1_other_prompt)
-    human1 = human1.update_other_view(human1_other_prompt, human2)
-    
+    human1 = human1.update_other_view(human2.name, human1_other_prompt)
+    print("HUMAN 1 (other view): ", human1.society[human2.name].attributes)
     human2_other_prompt = human2.generate_other_view_update_prompt(human1.name, conversation)
-    print(f"\nOther-view update prompt for {human2.name} about {human1.name}:")
-    print(human2_other_prompt)
-    human2 = human2.update_other_view(human2_other_prompt, human1)
+    human2 = human2.update_other_view(human1.name, human2_other_prompt)
+    print("HUMAN 2 (other view): ", human2.society[human1.name].attributes)
     
     table = AttributeTable()
     

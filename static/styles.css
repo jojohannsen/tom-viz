@@ -225,6 +225,14 @@ body {
   background-color: white;
 }
 
+.self-color {
+  color: lightgray;
+}
+
+.other-color {
+  color: darkgray;
+}
+
 .human2-color {
     color: darkgray;
     background-color: var(--misty-rose);

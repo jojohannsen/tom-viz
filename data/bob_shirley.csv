@@ -1,0 +1,521 @@
+input_format_instructions,input_name,input_prompt,output_output
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+Shirley: Buffy's a five-year-old tabby. I adopted her from a shelter last year.
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": false, ""attributes"": [""owns a cat named Buffy"", ""Buffy is a 5-year-old tabby cat"", ""adopted Buffy from a shelter last year""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+Shirley: Buffy's a five-year-old tabby. I adopted her from a shelter last year.
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": true, ""attributes"": [""cat owner"", ""cat's name is Buffy"", ""Buffy is a five-year-old tabby"", ""adopted Buffy from a shelter last year""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+Shirley: Buffy's a five-year-old tabby. I adopted her from a shelter last year.
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": false, ""attributes"": [""pet owner"", ""has a dog named Rocky"", ""Rocky is a golden retriever"", ""has had Rocky for 3 years""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+Shirley: Buffy's a five-year-old tabby. I adopted her from a shelter last year.
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": true, ""attributes"": [""pet owner"", ""has a dog named Rocky"", ""Rocky is a golden retriever"", ""has had Rocky for three years""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": false, ""attributes"": [""owns a cat named Buffy"", ""recently bought a new toy for her cat Buffy""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": true, ""attributes"": [""has a cat named Buffy""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": false, ""attributes"": [""Pet owner"", ""Has a dog named Rocky"", ""Has had Rocky for 3 years"", ""Rocky is a golden retriever""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+Bob: About three years now. He's a golden retriever. What about Buffy?
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": true, ""attributes"": [""Pet owner"", ""Has a dog named Rocky"", ""Rocky is a golden retriever"", ""Has had Rocky for three years""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": false, ""attributes"": [""owns a cat named Buffy"", ""recently bought a new toy for her cat Buffy""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": true, ""attributes"": [""cat owner"", ""has a cat named Buffy""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": false, ""attributes"": [""pet owner"", ""has a dog named Rocky""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+Shirley: That's lovely! How long have you had Rocky?
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": true, ""attributes"": [""pet owner"", ""has a dog named Rocky""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": false, ""attributes"": [""owns a cat named Buffy"", ""recently bought a new toy for her cat""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": true, ""attributes"": [""cat owner"", ""has a cat named Buffy""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": false, ""attributes"": [""pet owner"", ""has a dog named Rocky""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": true, ""attributes"": [""pet owner"", ""has a dog named Rocky""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": true, ""attributes"": [""notices details""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": false, ""attributes"": [""Has a cat named Buffy"", ""Buys toys for her cat""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Shirley,"
+        Based on the following conversation, identify any new information Shirley reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+        </CONVERSATION>
+
+        What new attributes should be added to Shirley's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Shirley"", ""myself"": true, ""attributes"": [""Has a cat named Buffy""]}"
+"The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {""properties"": {""foo"": {""title"": ""Foo"", ""description"": ""a list of strings"", ""type"": ""array"", ""items"": {""type"": ""string""}}}, ""required"": [""foo""]}
+the object {""foo"": [""bar"", ""baz""]} is a well-formatted instance of the schema. The object {""properties"": {""foo"": [""bar"", ""baz""]}} is not well-formatted.
+
+Here is the output schema:
+```
+{""description"": ""Represents one person's view of another person (or themselves)"", ""properties"": {""name"": {""description"": ""Name of the person being viewed"", ""title"": ""Name"", ""type"": ""string""}, ""myself"": {""default"": false, ""description"": ""True if this is a self-view"", ""title"": ""Myself"", ""type"": ""boolean""}, ""attributes"": {""description"": ""List of words or phrases or facts describing or associated with this human"", ""items"": {""type"": ""string""}, ""title"": ""Attributes"", ""type"": ""array""}}, ""required"": [""name""]}
+```",Bob,"
+        Based on the following conversation, identify any new information Bob reveals or learns about themselves.
+        List only new concrete facts and attributes not already in their self-view: 
+        
+        <HUMAN_VIEW>
+        []
+        </HUMAN_VIEW>
+        
+        <CONVERSATION>
+        Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
+Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
+        </CONVERSATION>
+
+        What new attributes should be added to Bob's self-view?
+        Please provide a list of individual facts or traits, one per line.
+        ","{""name"": ""Bob"", ""myself"": false, ""attributes"": [""Notices details like cat toys"", ""Friendly and makes conversation""]}"

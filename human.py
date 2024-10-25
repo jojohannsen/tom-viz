@@ -55,54 +55,111 @@ class Human(BaseModel):
         </CONVERSATION>
         
         What new attributes should be added to {self.name}'s view of {other_person}?
-        Please provide a list of individual facts or traits, one per line.
+        Please provide a list of individual facts or traits to populate the attributes field of the HumanView.
         """
 
     def update_other_view(self, other_person: str, prompt: str):
         """Update this person's view of another person"""
-        return self
-
-    def update_self_view(self, prompt: str):
-        """Update this person's self-view"""
+        print("UPDATE OTHER VIEW")
         # Create ChatOpenAI instance with gpt-4
-        gpt4 = ChatOpenAI(model_name="gpt-4", temperature=0.7)
+        gpt4 = ChatOpenAI(model_name="gpt-o", temperature=0).with_structured_output(HumanView)
 
         # Create ChatAnthropic instance with claude-3-sonnet-20240229
-        claude = ChatAnthropic(model="claude-3-sonnet-20240229", temperature=0.7)
-
-        # Create a PydanticOutputParser for HumanView
-        output_parser = PydanticOutputParser(pydantic_object=HumanView)
+        claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
 
         # Create a ChatPromptTemplate
         chat_prompt = ChatPromptTemplate.from_template(
-            "Based on the following information, create a HumanView for {name}:\n\n{prompt}\n\n{format_instructions}"
+            "Based on the following information, create a HumanView for {name}:\n\n{prompt}"
         )
 
         # Create chains for each model
-        gpt4_chain = chat_prompt | gpt4 | output_parser
-        claude_chain = chat_prompt | claude | output_parser
+        gpt4_chain = chat_prompt | gpt4 
+        claude_chain = chat_prompt | claude 
+
+        # Prepare the input
+        chain_input = {
+            "name": other_person,
+            "prompt": prompt
+        }
+
+        # Invoke each chain with the prepared input
+        gpt4_result = None
+        claude_result = None
+
+        try:
+            gpt4_result = gpt4_chain.invoke(chain_input)
+            print(f"GPT-4 Result for {other_person}:")
+            print(type(gpt4_result))
+        except Exception as e:
+            print(f"Error with GPT-4 invocation: {type(e)}")
+
+        try:
+            claude_result = claude_chain.invoke(chain_input)
+            print(f"Claude 3.5 Sonnet Result for {other_person}:")
+            print(type(claude_result))
+        except Exception as e:
+            print(f"Error with Claude 3.5 Sonnet invocation: {type(e)}")
+
+        # Update self-view only if we have valid results
+        if gpt4_result:
+            print(f"Updating {other_person}'s view with GPT-4 attributes: {gpt4_result.attributes}")
+            print("current view: ", self.society[other_person].attributes)
+            self.society[other_person].attributes = self.merge_attributes(self.society[other_person].attributes, gpt4_result.attributes)
+            print("new view: ", self.society[other_person].attributes)        
+        if claude_result:
+            print(f"Updating {other_person}'s view with Claude 3.5 Sonnet attributes: {claude_result.attributes}")
+            print("current view: ", self.society[other_person].attributes)
+            self.society[other_person].attributes = self.merge_attributes(self.society[other_person].attributes, claude_result.attributes)
+            print("new view: ", self.society[other_person].attributes)
+
+        return self
+
+
+    def update_self_view(self, prompt: str):
+        """Update this person's self-view"""
+        print("UPDATE SELF VIEW")
+        # Create ChatOpenAI instance with gpt-4
+        gpt4 = ChatOpenAI(model_name="gpt-4o", temperature=0).with_structured_output(HumanView)
+
+        # Create ChatAnthropic instance with claude-3-sonnet-20240229
+        claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
+
+        # Create a ChatPromptTemplate
+        chat_prompt = ChatPromptTemplate.from_template(
+            "Based on the following information, create a HumanView for {name}:\n\n{prompt}"
+        )
+
+        # Create chains for each model
+        gpt4_chain = chat_prompt | gpt4     
+        claude_chain = chat_prompt | claude 
 
         # Prepare the input
         chain_input = {
             "name": self.name,
-            "prompt": prompt,
-            "format_instructions": output_parser.get_format_instructions()
+            "prompt": prompt
         }
 
         # Invoke each chain with the prepared input
-        gpt4_result = gpt4_chain.invoke(chain_input)
-        claude_result = claude_chain.invoke(chain_input)
+        gpt4_result = None
+        claude_result = None
 
-        # Print out the resulting HumanView for each LLM
-        # print(f"GPT-4 Result for {self.name}:")
-        # print(gpt4_result)
-        # print(f"\nClaude 3.5 Sonnet Result for {self.name}:")
-        # print(claude_result)
+        try:
+            gpt4_result = gpt4_chain.invoke(chain_input)
+        except Exception as e:
+            print(f"Error with GPT-4 invocation: {type(e)}")
 
-        # For now, let's use the GPT-4 result to update the self_view
-        self.society[self.name].attributes = self.merge_attributes(self.society[self.name].attributes, gpt4_result.attributes)
-        self.society[self.name].attributes = self.merge_attributes(self.society[self.name].attributes, claude_result.attributes)
-        print(f"Updated {self.name}'s self-view: {self.society[self.name].attributes}")
+        try:
+            claude_result = claude_chain.invoke(chain_input)
+        except Exception as e:
+            print(f"Error with Claude 3.5 Sonnet invocation: {type(e)}")
+
+        # Update self-view only if we have valid results
+        if gpt4_result:
+            self.society[self.name].attributes = self.merge_attributes(self.society[self.name].attributes, gpt4_result.attributes)
+        
+        if claude_result:
+            self.society[self.name].attributes = self.merge_attributes(self.society[self.name].attributes, claude_result.attributes)
+
         return self
 
     def merge_attributes(self, current_attributes: List[str], new_attributes: List[str]) -> List[str]:
@@ -124,7 +181,7 @@ class Human(BaseModel):
         </CONVERSATION>
 
         What new attributes should be added to {self.name}'s self-view?
-        Please provide a list of individual facts or traits, one per line.
+Please provide a list of individual facts or traits to populate the attributes field of the HumanView.
         """
 
 # Example usage:
