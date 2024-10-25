@@ -104,10 +104,12 @@ class Human(BaseModel):
         # Logic to determine models to use
         # For example, you might check some configuration or condition
         # For simplicity, we'll use the existing models
-        gpt4 = ChatOpenAI(model_name="gpt-4o", temperature=0).with_structured_output(HumanView)
-        models.append(('GPT4', gpt4))
-        claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
-        models.append(('Claude', claude))
+        # gpt4 = ChatOpenAI(model_name="gpt-4o", temperature=0).with_structured_output(HumanView)
+        # models.append(('GPT4', gpt4))
+        # claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0).with_structured_output(HumanView)
+        # models.append(('Claude', claude))
+        haiku = ChatAnthropic(model="claude-3-haiku-20240307", temperature=0).with_structured_output(HumanView)
+        models.append(('Haiku', haiku))
         return models
 
     def update_self_view(self, prompt: str):

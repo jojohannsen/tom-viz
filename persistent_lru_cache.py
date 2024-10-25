@@ -4,7 +4,7 @@ import pickle
 import atexit
 from functools import wraps
 
-CACHE_FILE = 'data/cache_with_key.pkl'  # You can set this to any file path you prefer
+CACHE_FILE = 'data/haiku_cache.pkl'  # You can set this to any file path you prefer
 
 # Global variable to track if the last call was a cache hit
 last_call_was_cache_hit = False

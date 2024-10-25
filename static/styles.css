@@ -84,6 +84,7 @@ header {
     border-radius: 5px;
     padding: 1px 8px;
     margin: 3px 0;
+    margin-inline-end: 20px; /* Sets the end margin in the inline direction */
     font-size: 12px;
     font-family: 'Monotype Corsiva';
     font-style: italic;
@@ -293,3 +294,7 @@ th .right-arrow {
     vertical-align: middle;
 }
 
+#update-table-btn {
+  margin-left: auto;
+  display: block;
+}

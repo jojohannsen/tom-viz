@@ -24,21 +24,22 @@ def JJTitled(title:str, *args, cls="container", **kwargs)->FT:
 def RightArrow():
     return "→ "
 
+def ConversationSelector(span_text: str, button_text: str):
+    return Div(
+        Span(span_text, cls='participants-label'),
+        Button(button_text, id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
+        cls='participants-container',
+        hx_swap_oob='outerHTML'
+    )
+
 def ChatContainer():
     return Div(
         Div(
-            Div(
-                Button('Bob-Shirley', id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
-                Button('Update Table', id='update-table-btn', cls='participants-buttons', hx_get='/conversation', hx_target='#attribute-table', hx_swap='outerHTML'),
-                Span('...'),
-                Span('Participants:', cls='participants-label'),
-                ParticipantsButtons(participants[0], participants[1]),
-                cls='participants-container'
-            ),
+            ConversationSelector('Conversations:', 'Bob-Shirley'),
             cls='chat-header'
         ),
         Div(
-            Div('Hello! How can I assist you today?', data_sender=participants[1], cls='message agent-message'),
+            Div('Select a conversation to begin.', data_sender=participants[1], cls='message agent-message'),
             id='chat-messages',
             cls='chat-messages'
         ),
@@ -70,17 +71,17 @@ def AttributeTable():
         Table(
             ParticipantTableHeader(participants[0], participants[1]),
             Tbody(
-                Tr(Td('attributes', cls='row-header'), 
+                Tr(Td('thoughts', cls='row-header'), 
                    Td(AttributeList(get_human_view(human1, human1.name), 'self-color'), cls='human human1-color', id='human1-self-view'), 
                    Td(AttributeList(get_human_view(human1, human2.name), 'other-color'), cls='human human1-color', id='human1-other-view'), 
                    Td(AttributeList(get_human_view(human2, human2.name), 'self-color'), cls='human human2-color', id='human2-self-view'), 
                    Td(AttributeList(get_human_view(human2, human1.name), 'other-color'), cls='human human2-color', id='human2-other-view')),
-                Tr(Td('experiences', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('interests', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('family', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('friends', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('pets', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
-                Tr(Td('community', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color'))
+                # Tr(Td('experiences', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                # Tr(Td('interests', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                # Tr(Td('family', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                # Tr(Td('friends', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                # Tr(Td('pets', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                # Tr(Td('community', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color'))
             )
         ),
         cls='table-container',
@@ -88,9 +89,10 @@ def AttributeTable():
     )
 
 def ParticipantTableHeader(participant1, participant2):
+    update_button = Button('update', id='update-table-btn', cls='participants-buttons', hx_get='/conversation', hx_target='#attribute-table', hx_swap='outerHTML')
     return Thead(
         Tr(
-            Th('', rowspan=2, cls="row-header"),
+            Th(update_button, rowspan=2, cls="row-header"),
             Th(Span(participant1, id='table-participant1', cls='human1-color'), colspan=2, cls="human human1-color"),
             Th(Span(participant2, id='table-participant2', cls='human2-color'), colspan=2, cls="human human2-color")
         ),
@@ -154,7 +156,7 @@ def next_line():
             Div("Conversation ended. Click 'Next' to start over.", cls="message system-message")
         )
     else:
-        return result, ParticipantsButtons(participants[0], participants[1])
+        return result, ConversationSelector(f'{participants[0]}-{participants[1]}', 'Next')
 
 def ParticipantsButtons(participant1, participant2):
     trigger_script = Script(
