@@ -1,3 +1,6 @@
+Character:Bob is a plumber, with his own plumbing business.  He's really friendly and loves to talk about his pets, mostly his dog Rocky.
+Character:Shirley is a cat owner, with a five-year-old tabby named Buffy.  She's really friendly and loves to talk about her cat.
+Scene:Bob and Shirley are in the park.   Shirley is sitting on a bench by herself, and Bob is walking his dog Rocky.  Shirley is looking at her phone, when Rocky walks up to her.
 Bob: Hi there! I'm Bob. I couldn't help but notice the cat toy peeking out of your bag.
 Shirley: Oh, hello! I'm Shirley. Yes, I just picked up a new toy for my cat, Buffy.
 Bob: What a coincidence! I'm a pet owner too. I have a dog named Rocky.

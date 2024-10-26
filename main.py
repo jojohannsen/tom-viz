@@ -29,6 +29,7 @@ def ConversationSelector(span_text: str, button_text: str):
         Span(span_text, cls='participants-label'),
         Button(button_text, id='next-line', cls='participants-buttons', hx_get='/next', hx_target='#chat-messages', hx_swap='beforeend'),
         cls='participants-container',
+        id='conversation-selector',
         hx_swap_oob='outerHTML'
     )
 
@@ -66,12 +67,22 @@ def AttributeTable():
     
     def get_human_view(human, name):
         return human.society.get(name, HumanView(name=name, myself=(human.name == name)))
-
+    
+    thoughts = Div(
+        Span('thoughts'),
+        Button('update', 
+               id='update-table-btn', 
+               cls='participants-buttons', 
+               hx_get='/conversation', 
+               hx_target='#attribute-table', 
+               hx_swap='outerHTML'),
+        cls='thoughts-container'
+    )
     return Div(
-        Table(
+         Table(
             ParticipantTableHeader(participants[0], participants[1]),
             Tbody(
-                Tr(Td('thoughts', cls='row-header'), 
+                Tr(Td(thoughts, cls='row-header'), 
                    Td(AttributeList(get_human_view(human1, human1.name), 'self-color'), cls='human human1-color', id='human1-self-view'), 
                    Td(AttributeList(get_human_view(human1, human2.name), 'other-color'), cls='human human1-color', id='human1-other-view'), 
                    Td(AttributeList(get_human_view(human2, human2.name), 'self-color'), cls='human human2-color', id='human2-self-view'), 
@@ -89,10 +100,9 @@ def AttributeTable():
     )
 
 def ParticipantTableHeader(participant1, participant2):
-    update_button = Button('update', id='update-table-btn', cls='participants-buttons', hx_get='/conversation', hx_target='#attribute-table', hx_swap='outerHTML')
     return Thead(
         Tr(
-            Th(update_button, rowspan=2, cls="row-header"),
+            Th('', rowspan=2, cls="row-header"),
             Th(Span(participant1, id='table-participant1', cls='human1-color'), colspan=2, cls="human human1-color"),
             Th(Span(participant2, id='table-participant2', cls='human2-color'), colspan=2, cls="human human2-color")
         ),
@@ -146,6 +156,7 @@ def next_line():
     name, content = conversation_manager.next()
     is_user = name == participants[0]
     message_class = 'user-message' if is_user else 'agent-message'
+    message_class = 'intro-message' if name.startswith('Character') or name.startswith('Scene') else message_class
     
     result = Div(content.strip(), cls=f"message {message_class}", data_sender=name)
     current_line += 1

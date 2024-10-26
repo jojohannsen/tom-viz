@@ -78,6 +78,7 @@ header {
 }
 
 .participants-buttons {
+    display:inline;
     background-color: #e0e0e0;  /* Changed to a pale gray */
     color: black;
     border: none;
@@ -189,6 +190,18 @@ body {
   left: 10px;
 }
 
+.intro-message {
+  background-color: #f0fdfd;
+  align-self: flex-start;
+  max-width: 100%; /* Make it full width */
+  width: 100%; /* Ensure it takes up full width */
+  box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+.intro-message::before {
+  left: 10px;
+}
+
 .chat-input {
   display: flex;
   padding: 2px 10px;
@@ -261,17 +274,35 @@ th {
   color: #000000;
 }
 
-/* Color coding for each column */
-/* td:nth-child(1) { background-color: var(--platinum-2); }
-td:nth-child(2) { background-color: var(--misty-rose); }
-td:nth-child(3) { background-color: var(--misty-rose); }
-td:nth-child(4) { background-color: var(--platinum); }
-td:nth-child(5) { background-color: var(--platinum); } */
+/* Update the thoughts-container styles */
+.thoughts-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;  /* Space between 'thoughts' and the button */
+  justify-content: flex-start; /* Align items to the start of the container */
+}
 
-/* Add this new style for the table header */
-/* th:nth-child(2), th:nth-child(3) {
-    background-color: var(--misty-rose);
-} */
+.thoughts-container span {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.thoughts-container button {
+  font-style: italic;
+  font-weight: normal;
+  margin-left: 5px;
+  padding: 1px 8px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 5px;
+  color: black;
+  transition: all 0.3s ease;
+}
+
+.thoughts-container button:hover {
+  background-color: #7c5ebc;
+  color: white;
+}
 
 /* Remove hover effect */
 tr:hover {
@@ -294,7 +325,4 @@ th .right-arrow {
     vertical-align: middle;
 }
 
-#update-table-btn {
-  margin-left: auto;
-  display: block;
-}
+

@@ -223,3 +223,22 @@ def invoke_and_save(chain, chain_input, model_name, other_person):
             pickle.dump({'input': chain_input, 'error': str(e)}, f)
         
         return None
+
+def AttributeTable(human):
+    return f"""
+    <div class="attribute-table">
+        <div class="attribute-row">
+            <span class="attribute-label">Name:</span>
+            <span class="attribute-value">{human.name}</span>
+        </div>
+        <div class="attribute-row">
+            <span class="attribute-label">Age:</span>
+            <span class="attribute-value">{human.age}</span>
+        </div>
+        <div class="attribute-row">
+            <span class="attribute-label">Thoughts:</span>
+            <span class="attribute-value">{human.thoughts}</span>
+            <button class="update-button" hx-post="/update_thoughts" hx-target="#thoughts">Update</button>
+        </div>
+    </div>
+    """
