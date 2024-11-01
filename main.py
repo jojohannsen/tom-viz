@@ -4,7 +4,14 @@ import os
 from llms import create_named_participants
 from human import Human, HumanView
 from conversation_manager import ConversationManager  # Import ConversationManager
+from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI  # Add this line
+from pydantic import BaseModel, Field
 
+class ConversationContext(BaseModel):
+    human1_context: str = Field(description="Description of context from Person 1's perspective.   Just what they are doing, nothing about anyone else.")
+    human2_context: str = Field(description="Description of context from Person 2's perspective.   Just what they are doing, nothing about anyone else.")
+           
 os.environ['LANGCHAIN_PROJECT'] = 'theory-of-mind-2'
 
 app, rt = fast_app()
@@ -58,7 +65,7 @@ def AttributeList(human_view: HumanView, color: str) -> FT:
     """
     return Pre('\n'.join(human_view.attributes), cls=f'attribute-list {color}')
 
-def AttributeTable():
+def AttributeTable(context_response: ConversationContext = None):
     global human1, human2
     if human1 is None or human2 is None:
         # Initialize with an empty dictionary for society
@@ -78,6 +85,8 @@ def AttributeTable():
                hx_swap='outerHTML'),
         cls='thoughts-container'
     )
+    human1_context = context_response.human1_context if context_response else ""
+    human2_context = context_response.human2_context if context_response else ""
     return Div(
          Table(
             ParticipantTableHeader(participants[0], participants[1]),
@@ -87,7 +96,7 @@ def AttributeTable():
                    Td(AttributeList(get_human_view(human1, human2.name), 'other-color'), cls='human human1-color', id='human1-other-view'), 
                    Td(AttributeList(get_human_view(human2, human2.name), 'self-color'), cls='human human2-color', id='human2-self-view'), 
                    Td(AttributeList(get_human_view(human2, human1.name), 'other-color'), cls='human human2-color', id='human2-other-view')),
-                # Tr(Td('experiences', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
+                Tr(Td('context', cls='row-header'), Td(human1_context, id='human1-context', colspan=2, cls='human human1-color'), Td(human2_context, id='human2-context', colspan=2, cls='human human2-color')),
                 # Tr(Td('interests', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
                 # Tr(Td('family', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
                 # Tr(Td('friends', cls='row-header'), Td(cls='human human1-color'), Td(cls='human human1-color'), Td(cls='human human2-color'), Td(cls='human human2-color')),
@@ -147,7 +156,7 @@ def next_line():
             participants = conversation_manager.participants()
             current_line = 0
             return (
-                Div("Conversation...", cls="message system-message"),
+                #Div("Conversation...", cls="message system-message"),
                 ParticipantsButtons(participants[0], participants[1])
             )
         except Exception as e:
@@ -203,13 +212,43 @@ def get():
     # human2: Human
     human2 = next(participant_generator)
     print("HUMANS: ", human1.name, human2.name)
-    human1_self_prompt = human1.generate_self_view_update_prompt(conversation)
-    human1 = human1.update_self_view(human1_self_prompt)
-    print("HUMAN 1 (self view): ", human1.society[human1.name].attributes)
+    # extract and process any "Character" or "Scene" entries
+    lines = conversation.split('\n')
+    context_response = None
+    for line in lines:
+        character_match = re.match(r'Character: (\w+):', line)
+        if character_match:
+            character_name = character_match.group(1)
+            print("CHARACTER: ", character_name)
+            if character_name == human1.name:
+                human1_character_prompt = human1.generate_character_view_update_prompt(line)
+                human1 = human1.update_self_view(human1_character_prompt)
+                print("HUMAN 1 (character view): ", human1.society[character_name].attributes)
+            elif character_name == human2.name:
+                human2_character_prompt = human2.generate_character_view_update_prompt(line)
+                human2 = human2.update_self_view(human2_character_prompt)
+                print("HUMAN 2 (character view): ", human2.society[character_name].attributes)
+        has_context = line.startswith('Scene:')
+        if has_context:
+            print("CONTEXT: ", line)
+            context_prompt = ChatPromptTemplate.from_template(
+                """Given the following scene, give a description of context from each character's perspective.
+<SCENE>
+{line}
+</SCENE>
+Person 1's perspective is:
+{human1_name}
+Person 2's perspective is:
+{human2_name}
+                """
+            )
 
-    human2_self_prompt = human2.generate_self_view_update_prompt(conversation)
-    human2 = human2.update_self_view(human2_self_prompt)
-    print("HUMAN 2 (self view): ", human2.society[human2.name].attributes)
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+            context_chain = context_prompt | llm.with_structured_output(ConversationContext)
+            context_response = context_chain.invoke({"line": line, "human1_name": human1.name, "human2_name": human2.name})
+            print("CONTEXT RESPONSE: ", context_response)
+    lines = [line for line in lines if not line.startswith('Character:') and not line.startswith('Scene:')]
+    conversation = '\n'.join(lines)
     
     human1_other_prompt = human1.generate_other_view_update_prompt(human2.name, conversation)
     human1 = human1.update_other_view(human2.name, human1_other_prompt)
@@ -218,7 +257,7 @@ def get():
     human2 = human2.update_other_view(human1.name, human2_other_prompt)
     print("HUMAN 2 (other view): ", human2.society[human1.name].attributes)
     
-    table = AttributeTable()
+    table = AttributeTable(context_response)
     
     return table
 

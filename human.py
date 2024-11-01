@@ -147,6 +147,19 @@ class Human(BaseModel):
         """Merge two lists of attributes, removing duplicates"""
         return list(set(current_attributes + new_attributes))
 
+    def generate_character_view_update_prompt(self, line: str) -> str:
+        """Generate prompt to update this person's character view"""
+        return f"""
+        Given the following line from a conversation, identify any new information about our character {self.name}.
+        
+        <LINE>
+        {line}
+        </LINE>
+        
+        What new attributes should be added to {self.name}'s character view?
+        Please provide a list of individual facts or traits to populate the attributes field of the HumanView.
+        """
+
     def generate_self_view_update_prompt(self, conversation: str) -> str:
         """Generate prompt to update this person's self-view"""
         return f"""

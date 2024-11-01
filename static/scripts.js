@@ -108,8 +108,18 @@ userInput.addEventListener('keypress', (e) => {
   }
 });
 
-userName.addEventListener('click', () => changeName(userName, 0));
-agentName.addEventListener('click', () => changeName(agentName, 1));
+// Wrap the name-related DOM operations in DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    const userName = document.getElementById('user-name');
+    if (userName) {
+        userName.addEventListener('click', () => changeName(userName, 0));
+    }
+    
+    const agentName = document.getElementById('agent-name');
+    if (agentName) {
+        agentName.addEventListener('click', () => changeName(agentName, 1));
+    }
+});
 
 document.addEventListener('analyze-conversation', () => {
     console.log("analyze-conversation event triggered");
